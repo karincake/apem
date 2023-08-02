@@ -17,9 +17,8 @@ import (
 )
 
 type httpConf struct {
-	Host     string
-	Port     int
-	HttpConf *httpConf
+	Host string
+	Port int
 }
 
 var wg sync.WaitGroup
