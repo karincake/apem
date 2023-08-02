@@ -3,6 +3,7 @@ package apem
 import (
 	"net/http"
 
+	db "github.com/karincake/apem/databasegorm"
 	lg "github.com/karincake/apem/lang"
 	lz "github.com/karincake/apem/loggerzap"
 )
@@ -14,6 +15,7 @@ type app struct {
 	Version    string
 	LoggerConf *lz.LoggerConf
 	LangConf   *lg.LangConf
+	DbConf     *db.DbConf
 	HttpConf   *httpConf
 }
 
@@ -25,6 +27,7 @@ func init() {
 	Apem = &app{
 		LoggerConf: &lz.LoggerConf{},
 		LangConf:   &lg.LangConf{},
+		DbConf:     &db.DbConf{},
 	}
 	Apem.initConfig()
 }
