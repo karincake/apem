@@ -6,6 +6,7 @@ import (
 	db "github.com/karincake/apem/databasegorm"
 	lg "github.com/karincake/apem/lang"
 	lz "github.com/karincake/apem/loggerzap"
+	mr "github.com/karincake/apem/memstorageredis"
 )
 
 type app struct {
@@ -16,6 +17,7 @@ type app struct {
 	LoggerConf *lz.LoggerConf
 	LangConf   *lg.LangConf
 	DbConf     *db.DbConf
+	MsConf     *mr.MsConf
 	HttpConf   *httpConf
 }
 
@@ -28,6 +30,7 @@ func init() {
 		LoggerConf: &lz.LoggerConf{},
 		LangConf:   &lg.LangConf{},
 		DbConf:     &db.DbConf{},
+		MsConf:     &mr.MsConf{},
 	}
 	Apem.initConfig()
 }
@@ -41,6 +44,8 @@ func Run(appCodeName string, routerIn http.Handler) {
 	// Call manually to make it goes according to the desired flow
 	lz.Init(*Apem.LoggerConf)
 	lg.Init(*Apem.LangConf)
+	db.Init(*Apem.DbConf)
+	mr.Init(*Apem.MsConf)
 	Apem.initExtCall()
 	Apem.initHttp(routerIn)
 }
