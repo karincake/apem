@@ -10,15 +10,16 @@ import (
 )
 
 type app struct {
-	CodeName   string
-	FullName   string
-	Env        string
-	Version    string
-	LoggerConf *lz.LoggerConf
-	LangConf   *lg.LangConf
-	DbConf     *db.DbConf
-	MsConf     *mr.MsConf
-	HttpConf   *httpConf
+	CodeName        string
+	FullName        string
+	Env             string
+	Version         string
+	LoggerConf      *lz.LoggerConf
+	LangConf        *lg.LangConf
+	DbConf          *db.DbConf
+	MsConf          *mr.MsConf
+	HttpConf        *httpConf
+	RateLimiterConf *rateLimiterConf
 }
 
 // export package vars
@@ -39,7 +40,6 @@ func init() {
 func Run(appCodeName string, routerIn http.Handler) {
 	// basic instance completion
 	Apem.CodeName = appCodeName
-	// fmt.Println(Apem)
 
 	// Call manually to make it goes according to the desired flow
 	lz.Init(*Apem.LoggerConf)
