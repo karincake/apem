@@ -31,14 +31,6 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers http
 	return nil
 }
 
-func ProcessService(w http.ResponseWriter, r *http.Request, result, err any) {
-	if err != nil {
-		WriteJSON(w, http.StatusUnauthorized, td.II{"errors": err}, nil)
-	} else {
-		DataResponse(w, nil, result, nil, nil)
-	}
-}
-
 // write error response if validation fails, return boool true if success
 func ValidateAutoInc(w http.ResponseWriter, r *http.Request, input string) int {
 	id, err := strconv.Atoi(chi.URLParam(r, input))
