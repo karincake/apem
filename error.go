@@ -12,17 +12,12 @@ import (
 
 func (a *app) errorResponse(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
 	env := td.II{"error": message}
-	err := hh.WriteJSON(w, status, env, nil)
-	if err != nil {
-		a.logError(r, err)
-		w.WriteHeader(500)
-	}
+	hh.WriteJSON(w, status, env, nil)
 }
 
 func (a *app) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	a.logError(r, err)
-	message := "the server encountered a problem and could not process your request"
-	a.errorResponse(w, r, http.StatusInternalServerError, message)
+	a.errorResponse(w, r, http.StatusInternalServerError, "the server encountered a problem and could not process your request")
 }
 
 func (a *app) badRequestResponse(w http.ResponseWriter, r *http.Request, err error) {

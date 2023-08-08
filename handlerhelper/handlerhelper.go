@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	lz "github.com/karincake/apem/loggerzap"
 	sv "github.com/karincake/serabi"
 	td "github.com/karincake/tempe/data"
 	te "github.com/karincake/tempe/error"
@@ -16,10 +17,14 @@ import (
 	lg "github.com/karincake/apem/lang"
 )
 
-func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
+func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) {
 	js, err := json.Marshal(data)
 	if err != nil {
-		return err
+		w.Write([]byte("{ \"message\": \"error converting data or result to json\"}"))
+		w.WriteHeader(500)
+		if lz.I != nil {
+			lz.I.Error("error converting data or result to json")
+		}
 	}
 	js = append(js, '\n')
 	for key, value := range headers {
@@ -28,53 +33,42 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers http
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(js)
-	return nil
 }
 
 // write error response if validation fails, return boool true if success
 func ValidateAutoInc(w http.ResponseWriter, r *http.Request, input string) int {
-	id, err := strconv.Atoi(chi.URLParam(r, input))
-	if err != nil || id < 1 {
-		WriteJSON(w, http.StatusBadRequest, te.NewError("fieldVal-integerPositive", lg.I.Msg("fieldVal-integerPositive")), nil)
+	output, err := strconv.Atoi(chi.URLParam(r, input))
+	if err != nil || output < 1 {
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(input, te.NewError("val-integerPositive", lg.I.Msg("val-integerPositive")))}, nil)
 		return 0
 	}
-	return id
+	return output
 }
 
 func ValidateString(w http.ResponseWriter, r *http.Request, input string) string {
-	result := chi.URLParam(r, input)
-	if result == "" {
-		WriteJSON(w, http.StatusBadRequest, te.NewError("field-required", lg.I.Msg("field-required")), nil)
+	output := chi.URLParam(r, input)
+	if output == "" {
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(input, te.NewError("val-required", lg.I.Msg("val-required")))}, nil)
 		return ""
 	}
-	return result
+	return output
 }
 
 // write error if
-func ValidateIdUuid(w http.ResponseWriter, id string) (uid uuid.UUID, pass bool) {
-	uid, err := uuid.Parse(id)
+func ValidateIdUuid(w http.ResponseWriter, input string) uuid.UUID {
+	output, err := uuid.Parse(input)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, te.NewError("field-validUuid", lg.I.Msg("field-validUuid")+", "+err.Error()), nil)
-		pass = false
-		return
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(input, te.NewError("val-validUuid", lg.I.Msg("val-validUuid")))}, nil)
+		return uuid.Nil
 	}
-
-	pass = true
-	return
+	return output
 }
 
 // write error response if validation fails, return boool true on success
 func ValidateStruct(w http.ResponseWriter, data any) bool {
 	err := sv.Validate(data)
 	if err != nil {
-		httpStatus := http.StatusUnprocessableEntity
-		if err.KeyExists("struct") {
-			httpStatus = http.StatusBadRequest
-		}
-		WriteJSON(w, httpStatus, td.II{
-			"meta":   td.IS{"count": strconv.Itoa(err.Count())},
-			"errors": err,
-		}, nil)
+		writeError(w, err)
 		return false
 	}
 
@@ -85,14 +79,7 @@ func ValidateStruct(w http.ResponseWriter, data any) bool {
 func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 	err := sv.ValidateIoReader(&data, body)
 	if err != nil {
-		httpStatus := http.StatusUnprocessableEntity
-		if err.KeyExists("struct") {
-			httpStatus = http.StatusBadRequest
-		}
-		WriteJSON(w, httpStatus, td.II{
-			"meta":   td.IS{"count": strconv.Itoa(err.Count())},
-			"errors": err,
-		}, nil)
+		writeError(w, err)
 		return false
 	}
 
@@ -103,14 +90,7 @@ func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	err := sv.ValidateURL(&data, url)
 	if err != nil {
-		httpStatus := http.StatusUnprocessableEntity
-		if err.KeyExists("struct") {
-			httpStatus = http.StatusBadRequest
-		}
-		WriteJSON(w, httpStatus, td.II{
-			"meta":   td.IS{"count": strconv.Itoa(err.Count())},
-			"errors": err,
-		}, nil)
+		writeError(w, err)
 		return false
 	}
 
@@ -145,5 +125,19 @@ func DataResponse(w http.ResponseWriter, meta, data, ref, err any) {
 		} else {
 			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
 		}
+	}
+}
+
+// internal
+func writeError(w http.ResponseWriter, err te.Errors) {
+	if err.KeyExists("struct") {
+		WriteJSON(w, http.StatusBadRequest, err.GetOne("struct"), nil)
+	} else if err.KeyExists("resource-notFound") {
+		WriteJSON(w, http.StatusNotFound, err.GetOne("resource-notFound"), nil)
+	} else {
+		WriteJSON(w, http.StatusUnprocessableEntity, td.II{
+			"meta":   td.IS{"count": strconv.Itoa(err.Count())},
+			"errors": err,
+		}, nil)
 	}
 }

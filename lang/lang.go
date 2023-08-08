@@ -1,4 +1,4 @@
-package apem
+package lang
 
 import (
 	"encoding/json"
@@ -30,7 +30,7 @@ func New() langData {
 func Init(conf LangConf) {
 	I = &langData{}
 	I.Active = conf.Active
-	I.list = map[string]langItem{}
+	I.list = map[string]langItem{"en": defaultList}
 
 	jsonFile, err := os.Open(conf.SrcPath)
 	if err != nil {
