@@ -1,5 +1,8 @@
 package handlerhelper
 
+// All the functions are able to write directly using httpwriter due to
+// its purpose to help handlers
+
 import (
 	"encoding/json"
 	"io"
@@ -7,7 +10,6 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	lz "github.com/karincake/apem/loggerzap"
 	sv "github.com/karincake/serabi"
@@ -17,6 +19,7 @@ import (
 	lg "github.com/karincake/apem/lang"
 )
 
+// Writes json output thorugh http.ResponseWriter
 func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) {
 	js, err := json.Marshal(data)
 	if err != nil {
@@ -35,40 +38,67 @@ func WriteJSON(w http.ResponseWriter, status int, data interface{}, headers http
 	w.Write(js)
 }
 
-// write error response if validation fails, return boool true if success
-func ValidateAutoInc(w http.ResponseWriter, r *http.Request, input string) int {
-	output, err := strconv.Atoi(chi.URLParam(r, input))
-	if err != nil || output < 1 {
-		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(input, te.NewError("val-integerPositive", lg.I.Msg("val-integerPositive")))}, nil)
+// Writes error, should be called by data submission
+func WriteError(w http.ResponseWriter, err te.Errors) {
+	// check if the error is a non-field error
+	if err.Count() == 1 {
+		for idx, httpCode := range ErrorCodes {
+			if err.KeyExists(idx) {
+				WriteJSON(w, httpCode, err.GetOne(idx), nil)
+				return
+			}
+		}
+	}
+
+	WriteJSON(w, http.StatusUnprocessableEntity, td.II{
+		"meta":   td.IS{"count": strconv.Itoa(err.Count())},
+		"errors": err,
+	}, nil)
+}
+
+// Validates a string assuming the field is required.
+func ValidateString(w http.ResponseWriter, fieldName, input string) string {
+	if input == "" {
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(fieldName, te.NewError("val-required", lg.I.Msg("val-required")))}, nil)
+		return ""
+	}
+	return input
+}
+
+// Validates an int value from string, assuming the field is required.
+func ValidateInt(w http.ResponseWriter, fieldName, input string) int {
+	// val := chi.URLParam(r, input)
+	if input == "" {
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(fieldName, te.NewError("val-required", lg.I.Msg("val-required")))}, nil)
+		return 0
+	}
+	output, err := strconv.Atoi(input)
+	if err != nil {
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(fieldName, te.NewError("val-int", lg.I.Msg("val-int")))}, nil)
 		return 0
 	}
 	return output
 }
 
-func ValidateString(w http.ResponseWriter, r *http.Request, input string) string {
-	output := chi.URLParam(r, input)
-	if output == "" {
-		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(input, te.NewError("val-required", lg.I.Msg("val-required")))}, nil)
-		return ""
+// Validates a UUID from string assuming the field is required.
+func ValidateIdUuid(w http.ResponseWriter, fieldName, input string) uuid.UUID {
+	if input == "" {
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(fieldName, te.NewError("val-required", lg.I.Msg("val-required")))}, nil)
+		return uuid.Nil
 	}
-	return output
-}
-
-// write error if
-func ValidateIdUuid(w http.ResponseWriter, input string) uuid.UUID {
 	output, err := uuid.Parse(input)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(input, te.NewError("val-validUuid", lg.I.Msg("val-validUuid")))}, nil)
+		WriteJSON(w, http.StatusBadRequest, td.II{"errors": te.NewErrorsPick(fieldName, te.NewError("val-uuid", lg.I.Msg("val-uuid")))}, nil)
 		return uuid.Nil
 	}
 	return output
 }
 
-// write error response if validation fails, return boool true on success
+// Validates struct
 func ValidateStruct(w http.ResponseWriter, data any) bool {
 	err := sv.Validate(data)
 	if err != nil {
-		writeError(w, err)
+		WriteError(w, err)
 		return false
 	}
 
@@ -79,7 +109,7 @@ func ValidateStruct(w http.ResponseWriter, data any) bool {
 func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 	err := sv.ValidateIoReader(&data, body)
 	if err != nil {
-		writeError(w, err)
+		WriteError(w, err)
 		return false
 	}
 
@@ -90,7 +120,7 @@ func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	err := sv.ValidateURL(&data, url)
 	if err != nil {
-		writeError(w, err)
+		WriteError(w, err)
 		return false
 	}
 
@@ -120,24 +150,10 @@ func DataResponse(w http.ResponseWriter, meta, data, ref, err any) {
 			}
 		}
 	} else {
-		if message, ok := data.(string); !ok {
-			WriteJSON(w, http.StatusOK, td.Data{Meta: meta, Data: data}, nil)
-		} else {
+		if message, ok := data.(string); ok {
 			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
+		} else {
+			WriteJSON(w, http.StatusOK, td.Data{Meta: meta, Data: data}, nil)
 		}
-	}
-}
-
-// internal
-func writeError(w http.ResponseWriter, err te.Errors) {
-	if err.KeyExists("struct") {
-		WriteJSON(w, http.StatusBadRequest, err.GetOne("struct"), nil)
-	} else if err.KeyExists("resource-notFound") {
-		WriteJSON(w, http.StatusNotFound, err.GetOne("resource-notFound"), nil)
-	} else {
-		WriteJSON(w, http.StatusUnprocessableEntity, td.II{
-			"meta":   td.IS{"count": strconv.Itoa(err.Count())},
-			"errors": err,
-		}, nil)
 	}
 }
