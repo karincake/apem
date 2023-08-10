@@ -56,6 +56,35 @@ func WriteError(w http.ResponseWriter, err te.Errors) {
 	}, nil)
 }
 
+// respond at the service level that related to returning data
+func DataResponse(w http.ResponseWriter, meta, data, ref, err any) {
+	if data == nil && err == nil {
+		WriteJSON(w, http.StatusNotFound, te.NewError("resource-notFound", lg.I.Msg("resource-notFound")), nil)
+	} else if err != nil {
+		if msgAsString, ok := err.(string); ok {
+			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": msgAsString}, nil)
+		} else {
+			if msgAsMap, ok := err.(te.Errors); ok {
+				WriteError(w, msgAsMap)
+			} else if msgAsMap, ok := err.(map[string]any); ok {
+				WriteJSON(w, http.StatusUnprocessableEntity, td.II{
+					"meta":   td.IS{"count": strconv.Itoa(len(msgAsMap))},
+					"errors": err}, nil)
+			} else if msgAsError, ok := err.(error); ok {
+				WriteJSON(w, http.StatusUnprocessableEntity, te.NewError("unknown", msgAsError.Error()), nil)
+			} else {
+				WriteJSON(w, http.StatusUnprocessableEntity, td.II{"errors": err}, nil)
+			}
+		}
+	} else {
+		if message, ok := data.(string); ok {
+			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
+		} else {
+			WriteJSON(w, http.StatusOK, td.Data{Meta: meta, Data: data}, nil)
+		}
+	}
+}
+
 // Validates a string assuming the field is required.
 func ValidateString(w http.ResponseWriter, fieldName, input string) string {
 	if input == "" {
@@ -125,35 +154,4 @@ func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	}
 
 	return true
-}
-
-// respond at the service level that related to returning data
-func DataResponse(w http.ResponseWriter, meta, data, ref, err any) {
-	if data == nil && err == nil {
-		WriteJSON(w, http.StatusNotFound, te.NewError("resource-notFound", lg.I.Msg("resource-notFound")), nil)
-	} else if err != nil {
-		if msgAsString, ok := err.(string); ok {
-			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": msgAsString}, nil)
-		} else {
-			if msgAsMap, ok := err.(te.Errors); ok {
-				WriteJSON(w, http.StatusUnprocessableEntity, td.II{
-					"meta":   td.IS{"count": strconv.Itoa(msgAsMap.Count())},
-					"errors": msgAsMap}, nil)
-			} else if msgAsMap, ok := err.(map[string]any); ok {
-				WriteJSON(w, http.StatusUnprocessableEntity, td.II{
-					"meta":   td.IS{"count": strconv.Itoa(len(msgAsMap))},
-					"errors": err}, nil)
-			} else if msgAsError, ok := err.(error); ok {
-				WriteJSON(w, http.StatusUnprocessableEntity, te.NewError("unknown", msgAsError.Error()), nil)
-			} else {
-				WriteJSON(w, http.StatusUnprocessableEntity, td.II{"errors": err}, nil)
-			}
-		}
-	} else {
-		if message, ok := data.(string); ok {
-			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
-		} else {
-			WriteJSON(w, http.StatusOK, td.Data{Meta: meta, Data: data}, nil)
-		}
-	}
 }
