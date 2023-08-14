@@ -10,6 +10,7 @@ import (
 	lz "github.com/karincake/apem/loggerzap"
 )
 
+// Configuration type that is used by the core
 type LangConf struct {
 	Active  string
 	SrcPath string
@@ -21,6 +22,7 @@ type langData struct {
 	list   map[string]langItem
 }
 
+// Instance of the language
 var I *langData // instance
 
 func New() langData {

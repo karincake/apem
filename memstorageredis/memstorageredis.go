@@ -7,10 +7,12 @@ import (
 	lz "github.com/karincake/apem/loggerzap"
 )
 
+// Configuration type that is used by the core
 type MsConf struct {
 	Dsn string
 }
 
+// Instance of the language
 var I *redis.Client // instance
 
 func Init(conf MsConf) {

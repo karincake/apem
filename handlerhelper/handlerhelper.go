@@ -1,8 +1,5 @@
 package handlerhelper
 
-// All the functions are able to write directly using httpwriter due to
-// its purpose to help handlers
-
 import (
 	"encoding/json"
 	"io"

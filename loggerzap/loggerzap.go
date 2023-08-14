@@ -4,11 +4,13 @@ import (
 	"go.uber.org/zap"
 )
 
+// Configuration type that is used by the core
 type LoggerConf struct {
 	Mode  string
 	Level int8
 }
 
+// Instance of the logger
 var I *zap.Logger // instance
 
 func Init(conf LoggerConf) {

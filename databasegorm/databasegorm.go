@@ -10,6 +10,7 @@ import (
 	lz "github.com/karincake/apem/loggerzap"
 )
 
+// Configuration type that is used by the core
 type DbConf struct {
 	Dsn          string `yaml:"dsn"`
 	MaxOpenConns int    `yaml:"maxOpenConns"`
@@ -18,7 +19,9 @@ type DbConf struct {
 	Dialect      string `yaml:"dialect"`
 }
 
-var I *gorm.DB // instance
+// Instance of the logger
+var I *gorm.DB
+
 var autoMigrateList []interface{}
 
 func Init(conf DbConf) {
@@ -53,6 +56,7 @@ func Init(conf DbConf) {
 	I.AutoMigrate(autoMigrateList...)
 }
 
+// To add a model into migration list
 func AutoMigrate(model ...interface{}) {
 	autoMigrateList = append(autoMigrateList, model...)
 }

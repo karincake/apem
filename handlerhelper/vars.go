@@ -18,4 +18,5 @@ var ErrorCodes = map[string]int{
 	"payload-bad":    http.StatusBadRequest,
 	"data-notFound":  http.StatusNotFound,
 	"auth-forbidden": http.StatusForbidden,
+	"server-error":   http.StatusInternalServerError,
 }

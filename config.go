@@ -7,10 +7,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// nvm
-// func init() {
-// }
-
 func (a *app) initConfig() {
 	// stated config path will be priority
 	cfgPath := "."
