@@ -1,5 +1,5 @@
 # Handler Helper
-Package that helps with writing http output through various process therefore this package should be called by the handler and never called directly by the services. Due to its nature, all of its functions requres httpwriter as one of the parameter.
+Package that helps with writing http output through various process therefore this package should be called by the handler and never called directly by the services. Due to its nature, all of its functions requres httpwriter as one of the parameter. Its main validation process uses pakcage serabi (https://github.com/karincake/serabi)
 
 ## The HTTP Output
 All functions return 2 values: data and error
