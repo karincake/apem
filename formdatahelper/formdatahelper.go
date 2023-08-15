@@ -40,8 +40,20 @@ func CopyToStruct(input any, r *http.Request) error {
 			continue
 		}
 
+		key := ft.Tag.Get("json")
+		if key != "" {
+			keys := strings.Split(key, ",")
+			if keys[0] != "" {
+				key = keys[0]
+			} else {
+				key = ft.Name
+			}
+		} else {
+			key = ft.Name
+		}
+
 		fName := ft.Name
-		rv := r.FormValue(fName)
+		rv := r.FormValue(key)
 		ftName := ft.Type.String()
 		ftNameClean := strings.Trim(ftName, "*")
 		switch {

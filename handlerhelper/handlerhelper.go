@@ -156,7 +156,7 @@ func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 
 // by form-data version of ValidateStruct, to cover form-data, return boool true on success
 func ValidateStructByFD(w http.ResponseWriter, r *http.Request, data any) bool {
-	err := fh.CopyToStruct(data, r)
+	err := fh.CopyToStruct(&data, r)
 	if err != nil {
 		errors := te.NewErrorsPick("payload-bad", te.NewError("parse-fail", err.Error()))
 		WriteError(w, errors)
