@@ -13,6 +13,7 @@ import (
 	td "github.com/karincake/tempe/data"
 	te "github.com/karincake/tempe/error"
 
+	fh "github.com/karincake/apem/formdatahelper"
 	lg "github.com/karincake/apem/lang"
 )
 
@@ -147,6 +148,18 @@ func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	err := sv.ValidateURL(&data, url)
 	if err != nil {
 		WriteError(w, err)
+		return false
+	}
+
+	return true
+}
+
+// by form-data version of ValidateStruct, to cover form-data, return boool true on success
+func ValidateStructByFD(w http.ResponseWriter, r *http.Request, data any) bool {
+	err := fh.CopyToStruct(data, r)
+	if err != nil {
+		errors := te.NewErrorsPick("payload-bad", te.NewError("parse-fail", err.Error()))
+		WriteError(w, errors)
 		return false
 	}
 
