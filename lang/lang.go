@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"go.uber.org/zap"
+	"golang.org/x/exp/maps"
 
 	lz "github.com/karincake/apem/loggerzap"
 )
@@ -43,7 +44,7 @@ func Init(conf LangConf) {
 	var myLI langItem = langItem{}
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	json.Unmarshal(byteValue, &myLI)
-	I.list["en"] = myLI
+	maps.Copy(I.list["en"], myLI)
 	lz.I.Info("instantiation", zap.String("feature", "lang"), zap.String("source", "built-in"), zap.String("status", "done"))
 }
 
@@ -70,9 +71,7 @@ func (a *langData) AddMsgList(list langItem, opt ...string) {
 		lang = opt[1]
 	}
 
-	for k, v := range list {
-		a.list[lang][k] = v
-	}
+	maps.Copy(a.list[lang], list)
 }
 
 func (a *langData) Msg(k string, opt ...string) string {

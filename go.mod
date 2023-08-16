@@ -9,6 +9,7 @@ require (
 	github.com/karincake/tempe v0.0.3
 	github.com/spf13/viper v1.16.0
 	go.uber.org/zap v1.21.0
+	golang.org/x/exp v0.0.0-20230811145659-89c5cff77bcb
 	golang.org/x/time v0.1.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/driver/postgres v1.5.2
