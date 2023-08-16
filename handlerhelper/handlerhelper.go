@@ -57,7 +57,7 @@ func WriteError(w http.ResponseWriter, err te.Errors) {
 // respond at the service level that related to returning data
 func DataResponse(w http.ResponseWriter, meta, data, ref, err any) {
 	if data == nil && err == nil {
-		WriteJSON(w, http.StatusNotFound, te.NewError("resource-notFound", lg.I.Msg("resource-notFound")), nil)
+		WriteJSON(w, http.StatusNotFound, te.NewError("data-notFound", lg.I.Msg("data-notFound")), nil)
 	} else if err != nil {
 		if msgAsString, ok := err.(string); ok {
 			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": msgAsString}, nil)
@@ -132,7 +132,7 @@ func ValidateStruct(w http.ResponseWriter, data any) bool {
 	return true
 }
 
-// by io reader version of ValidateStruct, to cover request.body, return boool true on success
+// by io reader version of ValidateStruct, to cover request.body, return bool true on success
 func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 	err := sv.ValidateIoReader(&data, body)
 	if err != nil {
@@ -143,7 +143,7 @@ func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 	return true
 }
 
-// by io reader version of ValidateStruct, to cover request.body, return boool true on success
+// by io reader version of ValidateStruct, to cover request.body, return bool true on success
 func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	err := sv.ValidateURL(&data, url)
 	if err != nil {
@@ -154,7 +154,7 @@ func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	return true
 }
 
-// by form-data version of ValidateStruct, to cover form-data, return boool true on success
+// by form-data version of ValidateStruct, to cover form-data, return bool true on success
 func ValidateStructByFD(w http.ResponseWriter, r *http.Request, data any) bool {
 	err := fh.CopyToStruct(&data, r)
 	if err != nil {

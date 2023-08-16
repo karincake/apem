@@ -15,8 +15,9 @@ var SuccessCodes = map[string]int{
 }
 
 var ErrorCodes = map[string]int{
-	"payload-bad":    http.StatusBadRequest,
-	"data-notFound":  http.StatusNotFound,
+	"auth-required":  http.StatusUnauthorized,
 	"auth-forbidden": http.StatusForbidden,
+	"data-notFound":  http.StatusNotFound,
 	"server-error":   http.StatusInternalServerError,
+	"payload-bad":    http.StatusBadRequest,
 }
