@@ -163,5 +163,11 @@ func ValidateStructByFD(w http.ResponseWriter, r *http.Request, data any) bool {
 		return false
 	}
 
+	teErr := sv.Validate(data)
+	if teErr != nil {
+		WriteError(w, teErr)
+		return false
+	}
+
 	return true
 }
