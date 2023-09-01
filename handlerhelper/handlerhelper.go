@@ -56,28 +56,28 @@ func WriteError(w http.ResponseWriter, err te.XErrors) {
 // Respond at the service level that related to returning data
 // Note that it should be called for things related to data processing due to
 // it's only having 2 error conditions: data not found or unprocessable entity
-func DataResponse(w http.ResponseWriter, meta, data, ref, err any) {
+func DataResponse(w http.ResponseWriter, data, err, meta, ref any) {
 	if data == nil && err == nil {
 		WriteJSON(w, http.StatusNotFound, te.XError{
 			Code:    "data-notFound",
 			Message: lg.I.Msg("data-notFound"),
 		}, nil)
 	} else if err != nil {
-		if msgAsString, ok := err.(string); ok {
-			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": msgAsString}, nil)
+		if stringErr, ok := err.(string); ok {
+			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": stringErr}, nil)
 		} else {
-			if msgAsMap, ok := err.(te.XErrors); ok {
-				WriteError(w, msgAsMap)
-			} else if msgAsMap, ok := err.(te.XError); ok {
-				WriteJSON(w, http.StatusUnprocessableEntity, msgAsMap, nil)
-			} else if msgAsMap, ok := err.(map[string]any); ok {
+			if mapErr, ok := err.(te.XErrors); ok {
+				WriteError(w, mapErr)
+			} else if xError, ok := err.(te.XError); ok {
+				WriteJSON(w, http.StatusUnprocessableEntity, xError, nil)
+			} else if mapErr, ok := err.(map[string]any); ok {
 				WriteJSON(w, http.StatusUnprocessableEntity, td.II{
-					"meta":   td.IS{"count": strconv.Itoa(len(msgAsMap))},
-					"errors": msgAsMap}, nil)
-			} else if msgAsError, ok := err.(error); ok {
+					"meta":   td.IS{"count": strconv.Itoa(len(mapErr))},
+					"errors": mapErr}, nil)
+			} else if err, ok := err.(error); ok {
 				WriteJSON(w, http.StatusUnprocessableEntity, te.XError{
 					Code:    "unknown",
-					Message: msgAsError.Error(),
+					Message: err.Error(),
 				}, nil)
 			} else {
 				WriteJSON(w, http.StatusUnprocessableEntity, td.II{"errors": err}, nil)
@@ -175,12 +175,6 @@ func ValidateStructByFD(w http.ResponseWriter, r *http.Request, data any) bool {
 	err := sv.ValidateFormData(&data, r)
 	if err != nil {
 		WriteError(w, err.(te.XErrors))
-		return false
-	}
-
-	teErr := sv.Validate(data)
-	if teErr != nil {
-		WriteError(w, teErr.(te.XErrors))
 		return false
 	}
 
