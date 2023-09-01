@@ -1,15 +1,13 @@
 # Handler Helper
-Package that helps with writing http output through various processes, therefore this package should be called by the handler and never called directly by the services. Due to its nature, all of its functions requres httpwriter as one of the parameter, and whenever error occured it writes error directly from it. Its main validation process uses pakcage serabi (https://github.com/karincake/serabi)
+Package that helps with writing http output through various processes, therefore this package should be called by the handler and never called directly by the services. Due to its nature, all of its functions requres httpwriter as one of the parameter, and whenever error occured it writes error directly from it.
 
-## The HTTP Output
-All functions return 2 values: data and error
+Note that many of its output depends on the package tempe data and error (https://github.com/karincake/tempe)
 
-### Data
-The format being used is from package tempe's data (https://github.com/karincake/tempe/data)
+## Validation
+There are many validation available in the pacakage. Some of its validation process utilizes package serabi (https://github.com/karincake/serabi)
 
-### Errors
-Most the the time processing data requires validation which might result errors in the process. There are 2 types of errors:
-1. Non-field error, which uses single error
-2. field error, which uses multiple errors
 
-The format being used is from package tempe's error (https://github.com/karincake/tempe/error).
+## Errors Output
+There are 2 primary types of errors:
+1. Data field error, that can have multiple errors at once and should always uses unprocessable entity error, uses te.XErrors format
+2. Non data field error, that only has single error, uses te.XError format

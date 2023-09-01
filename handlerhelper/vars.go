@@ -14,10 +14,13 @@ var SuccessCodes = map[string]int{
 	"data-accepted": http.StatusAccepted,
 }
 
+// mostly for single error
 var ErrorCodes = map[string]int{
 	"auth-required":  http.StatusUnauthorized,
 	"auth-forbidden": http.StatusForbidden,
 	"data-notFound":  http.StatusNotFound,
 	"server-error":   http.StatusInternalServerError,
 	"payload-bad":    http.StatusBadRequest,
+	"parse-fail":     http.StatusBadRequest,
+	"convert-fail":   http.StatusBadRequest,
 }
