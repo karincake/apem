@@ -5,7 +5,8 @@ env: development
 
 langConf
   active: en
-  srcPath: ./language.json
+  path: ./lang
+  fileName: data.json
 
 loggerZapConf:
   mode:
