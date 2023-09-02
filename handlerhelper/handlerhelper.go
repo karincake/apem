@@ -42,7 +42,7 @@ func WriteError(w http.ResponseWriter, err te.XError) {
 	for idx, code := range ErrorCodes {
 		if err.Code == idx {
 			httpCode = code
-			return
+			break
 		}
 	}
 
