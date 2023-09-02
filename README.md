@@ -2,7 +2,7 @@
 A simple bundle that helps you manage the configuration to build http ReST-API server using Go.
 
 ## Goal
-To provide instance of each feature so it will be ready to use bu adjusting the configuration based on your environment. 
+To provide instance of each feature so it will be ready to use by adjusting the configuration according to your environment. 
 
 ## The Features
 Basic features, which is automatically apply the configuration on the start, including:
