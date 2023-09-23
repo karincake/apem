@@ -2,6 +2,7 @@ package lang
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -13,8 +14,9 @@ import (
 
 // Configuration type that is used by the core
 type LangConf struct {
-	Active  string
-	SrcPath string
+	Active   string
+	Path     string
+	FileName string
 }
 
 type langItem map[string]string
@@ -35,7 +37,7 @@ func Init(conf LangConf) {
 	I.Active = conf.Active
 	I.list = map[string]langItem{"en": defaultList}
 
-	jsonFile, err := os.Open(conf.SrcPath)
+	jsonFile, err := os.Open(fmt.Sprintf("%v/%v/%v", conf.Path, conf.Active, conf.FileName))
 	if err != nil {
 		lz.I.Fatal("failed to load source file. " + err.Error())
 	}

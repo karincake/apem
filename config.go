@@ -25,6 +25,8 @@ func (a *app) initConfig() {
 	viper.SetDefault("Version", "1.0.0")
 	viper.SetDefault("Env", "development")
 	viper.SetDefault("LangConf.Active", "en")
+	viper.SetDefault("LangConf.Path", "./lang")
+	viper.SetDefault("LangConf.FileName", "languages.json")
 	viper.SetDefault("HttpConf.Host", "127.0.0.1")
 	viper.SetDefault("HttpConf.Port", "8000")
 
