@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -54,7 +55,7 @@ func WriteError(w http.ResponseWriter, err te.XError) {
 // with the possible error only for unprocessable entity that related to
 // data field which can have more than one error. Any non-field error, which
 // normally a single error will be disposed to WriteError funcion
-func DataResponse(w http.ResponseWriter, data, err, meta, ref any) {
+func DataResponse(w http.ResponseWriter, data, err any) {
 	if err != nil {
 		if stringErr, ok := err.(string); ok {
 			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": stringErr}, nil)
@@ -82,10 +83,20 @@ func DataResponse(w http.ResponseWriter, data, err, meta, ref any) {
 			}
 		}
 	} else if data != nil {
-		if message, ok := data.(string); ok {
+		if dataVal, ok := data.(td.Data); ok {
+			WriteJSON(w, http.StatusOK, dataVal, nil)
+		} else if message, ok := data.(string); ok {
 			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
 		} else {
-			WriteJSON(w, http.StatusOK, td.Data{Meta: meta, Data: data}, nil)
+			v := reflect.ValueOf(data)
+			for v.Kind() == reflect.Ptr {
+				v = v.Elem()
+			}
+			if v.Kind() != reflect.Struct {
+				WriteJSON(w, http.StatusOK, td.II{"value": data}, nil)
+			} else {
+				WriteJSON(w, http.StatusOK, data, nil)
+			}
 		}
 	} else {
 		WriteJSON(w, http.StatusNotFound, te.XError{
@@ -147,7 +158,7 @@ func ValidateIdUuid(w http.ResponseWriter, fieldName, input string) uuid.UUID {
 func ValidateStruct(w http.ResponseWriter, data any) bool {
 	err := sv.Validate(data)
 	if err != nil {
-		DataResponse(w, nil, err, nil, nil)
+		DataResponse(w, nil, err)
 		return false
 	}
 
@@ -158,7 +169,7 @@ func ValidateStruct(w http.ResponseWriter, data any) bool {
 func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 	err := sv.ValidateIoReader(&data, body)
 	if err != nil {
-		DataResponse(w, nil, err, nil, nil)
+		DataResponse(w, nil, err)
 		return false
 	}
 
@@ -169,7 +180,7 @@ func ValidateStructByIOR(w http.ResponseWriter, body io.Reader, data any) bool {
 func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 	err := sv.ValidateURL(&data, url)
 	if err != nil {
-		DataResponse(w, nil, err, nil, nil)
+		DataResponse(w, nil, err)
 		return false
 	}
 
@@ -180,7 +191,7 @@ func ValidateStructByURL(w http.ResponseWriter, url url.URL, data any) bool {
 func ValidateStructByFD(w http.ResponseWriter, r *http.Request, data any) bool {
 	err := sv.ValidateFormData(&data, r)
 	if err != nil {
-		DataResponse(w, nil, err, nil, nil)
+		DataResponse(w, nil, err)
 		return false
 	}
 
