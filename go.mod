@@ -45,3 +45,8 @@ require (
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+
+replace github.com/karincake/serabi => E:\projects\kick\serabi
+replace github.com/karincake/getuk => E:\projects\kick\getuk
+replace github.com/karincake/semprit => E:\projects\kick\semprit
