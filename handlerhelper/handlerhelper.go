@@ -92,7 +92,8 @@ func DataResponse(w http.ResponseWriter, data, err any) {
 			for v.Kind() == reflect.Ptr {
 				v = v.Elem()
 			}
-			if v.Kind() != reflect.Struct {
+			vKind := v.Kind()
+			if vKind != reflect.Struct && vKind != reflect.Map {
 				WriteJSON(w, http.StatusOK, td.II{"value": data}, nil)
 			} else {
 				WriteJSON(w, http.StatusOK, data, nil)
