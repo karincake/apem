@@ -56,7 +56,24 @@ func WriteError(w http.ResponseWriter, err te.XError) {
 // data field which can have more than one error. Any non-field error, which
 // normally a single error will be disposed to WriteError funcion
 func DataResponse(w http.ResponseWriter, data, err any) {
-	if err != nil {
+	if data != nil && err == nil {
+		if dataVal, ok := data.(td.Data); ok {
+			WriteJSON(w, http.StatusOK, dataVal, nil)
+		} else if message, ok := data.(string); ok {
+			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
+		} else {
+			v := reflect.ValueOf(data)
+			for v.Kind() == reflect.Ptr {
+				v = v.Elem()
+			}
+			vKind := v.Kind()
+			if vKind != reflect.Struct && vKind != reflect.Map {
+				WriteJSON(w, http.StatusOK, td.II{"value": data}, nil)
+			} else {
+				WriteJSON(w, http.StatusOK, data, nil)
+			}
+		}
+	} else if err != nil {
 		if stringErr, ok := err.(string); ok {
 			WriteJSON(w, http.StatusUnprocessableEntity, td.IS{"Message": stringErr}, nil)
 		} else {
@@ -80,23 +97,6 @@ func DataResponse(w http.ResponseWriter, data, err any) {
 			} else {
 				// worst case unknown error
 				WriteJSON(w, http.StatusUnprocessableEntity, td.II{"errors": err}, nil)
-			}
-		}
-	} else if data != nil {
-		if dataVal, ok := data.(td.Data); ok {
-			WriteJSON(w, http.StatusOK, dataVal, nil)
-		} else if message, ok := data.(string); ok {
-			WriteJSON(w, http.StatusOK, td.IS{"message": message}, nil)
-		} else {
-			v := reflect.ValueOf(data)
-			for v.Kind() == reflect.Ptr {
-				v = v.Elem()
-			}
-			vKind := v.Kind()
-			if vKind != reflect.Struct && vKind != reflect.Map {
-				WriteJSON(w, http.StatusOK, td.II{"value": data}, nil)
-			} else {
-				WriteJSON(w, http.StatusOK, data, nil)
 			}
 		}
 	} else {
