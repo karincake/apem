@@ -148,10 +148,8 @@ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1
 github.com/jstemmer/go-junit-report v0.9.1/go.mod h1:Brl9GWCQeLvo8nXZwPNNblvFj/XSXhF0NWZEnDohbsk=
 github.com/karincake/semprit v0.0.2 h1:54g3s6aK19z11O1+Wbx1s0RWnD9vY6CC4WfNj7cXlwI=
 github.com/karincake/semprit v0.0.2/go.mod h1:BRDYKjUqxMYnXnYaKjYPiNx9Q/VfoN8JrxAdZeGrsDQ=
-github.com/karincake/serabi v0.0.8 h1:xr9zX5g/yzLJ5+qoEwEkDbyUo/TV1vXjUoeC4IsNdrs=
-github.com/karincake/serabi v0.0.8/go.mod h1:dBZZeIWQFsJpElTRtfVl56Wkxu8XdjaRgp+H/gzqM+o=
-github.com/karincake/serabi v0.0.9 h1:oQeISr14Po7tAbAPJQhNTlkbRbaOlntHtsVdGBSmN/4=
-github.com/karincake/serabi v0.0.9/go.mod h1:dBZZeIWQFsJpElTRtfVl56Wkxu8XdjaRgp+H/gzqM+o=
+github.com/karincake/serabi v0.0.10-20240114-a h1:FIPeI70Cp3x40WO9pYMORL167Ln4Rppjgt5Zh/UeR+s=
+github.com/karincake/serabi v0.0.10-20240114-a/go.mod h1:dBZZeIWQFsJpElTRtfVl56Wkxu8XdjaRgp+H/gzqM+o=
 github.com/karincake/tempe v0.0.8 h1:EcILkKuYlCRfhOs/RGCZNDcHCNfYVAH7Kf4i/Fu9pKs=
 github.com/karincake/tempe v0.0.8/go.mod h1:xcL8U1S4oofQ+YeCxlw6tmcErdp7PL9Ad04caBB/laY=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=

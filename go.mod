@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.3.0
-	github.com/karincake/serabi v0.0.9
+	github.com/karincake/serabi v0.0.10-20240114-a
 	github.com/karincake/tempe v0.0.8
 	github.com/spf13/viper v1.16.0
 	go.uber.org/zap v1.21.0
@@ -45,8 +45,3 @@ require (
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-
-replace github.com/karincake/serabi => E:\projects\kick\serabi
-replace github.com/karincake/getuk => E:\projects\kick\getuk
-replace github.com/karincake/semprit => E:\projects\kick\semprit
