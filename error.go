@@ -6,13 +6,13 @@ import (
 	td "github.com/karincake/tempe/data"
 	"go.uber.org/zap"
 
-	hh "github.com/karincake/apem/handlerhelper"
+	// hh "github.com/karincake/apem/handlerhelper"
 	lz "github.com/karincake/apem/loggerzap"
 )
 
 func (a *app) errorResponse(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
 	env := td.II{"error": message}
-	hh.WriteJSON(w, status, env, nil)
+	WriteJSON(w, status, env, nil)
 }
 
 func (a *app) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
