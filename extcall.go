@@ -10,6 +10,6 @@ func (a *app) initExtCall() {
 	}
 }
 
-func RegisterExtrCall(e extCall) {
+func RegisterExtCall(e extCall) {
 	extraCalls = append(extraCalls, e)
 }
