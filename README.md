@@ -46,9 +46,9 @@ import (
 )
 
 func main() {
-  // Your starting point wher you supply the adapters, here in the following
-  // example it supplies logger adapter since it is required by apem itself.
-	a.Run(createHandlers(), &l.O)
+    // Your starting point wher you supply the adapters, here in the following
+    // example it supplies logger adapter since it is required by apem itself.
+	a.Run(createHandlers(), &l.O) // &l.O is the logger's object
 }
 ```
 
@@ -70,7 +70,7 @@ In the earlier example, the `Run` function is supplied with `loger-zerolog` obje
 
 ## Covered Areas
 ### App
-Just your app info, not some mandatory thing
+Just your app information
 
 Configuration structure with sample:
 ```
@@ -98,6 +98,41 @@ httpConf:
   port: 8100
 ```
 
+### Logger
+Covered packages:
+- `https://github.com/rs/zerolog`
+- `https://github.com/uber-go/zap`
+
+
+Configuration structure with sample (mysql):
+```
+loggerConf:
+  mode:
+  level:
+  output:
+```
+
+Due to the needs of standardization for the logger because of it's being used by the core, the interface also has several methods for logging purpose you can use as well listed as follows:
+- `Debug()`
+- `Info()`
+- `Warning()`
+- `Error()`
+- `Panic()`
+- `Fatal()`
+- `Bool(string, bool)`
+- `Int(string, int)`
+- `Int8(string, int8)`
+- `Int16(string, int16)`
+- `Int32(string, int32)`
+- `Int64(string, int64)`
+- `Uint(string, uint)`
+- `Uint8(string, uint8)`
+- `Uint16(string, uint16)`
+- `Uint32(string, uint32)`
+- `Uint64(string, uint64)`
+- `String(string, string)`
+- `Send()`
+
 ### Database Server
 Covered packages:
 - `https://github.com/go-gorm/gorm` using `https://github.com/go-gorm/mysql`
@@ -120,20 +155,6 @@ Configuration structure with sample:
 ```
 msConf:
   dsn: 127.0.0.1:6379
-```
-
-### Logger
-Covered packages:
-- `https://github.com/rs/zerolog`
-- `https://github.com/uber-go/zap`
-
-
-Configuration structure with sample (mysql):
-```
-loggerConf:
-  mode:
-  level:
-  output:
 ```
 
 ### Language
