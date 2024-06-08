@@ -1,0 +1,28 @@
+fullName: Apem
+codeName: apem
+version: 0.0.1
+env: development
+lang: en
+
+httpConf:
+  host: 127.0.0.1
+  port: 8100
+
+loggerConf:
+  mode: dev
+  level: 1
+  output:
+
+langConf:
+  active: en
+  path: ../../reources/language
+  fileName: data.json
+
+dbConf:
+  dsn: root:12341234@tcp(127.0.0.1:3306)/apem?charset=utf8mb4&parseTime=True&loc=Local
+  maxOpenConns: 5
+  maxIdleConns: 5
+  maxIdleTime: 100
+
+msConf:
+  dsn: 127.0.0.1:6379
