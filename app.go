@@ -17,7 +17,7 @@ import (
 
 type extCall func()
 
-type app struct {
+type apemConf struct {
 	Conf            *appa.AppConf
 	LoggerConf      *loggera.LoggerConf    `yaml:"loggerConf"`
 	LangConf        *langa.LangConf        `yaml:"langConf"`
@@ -28,7 +28,7 @@ type app struct {
 	extCalls        []extCall
 }
 
-func (a *app) initConfig() {
+func (a *apemConf) initConfig() {
 	cfgFile := "./config.yml"
 	flag.StringVar(&cfgFile, "config-file", "./config.yml", "Configuration path (default=./config.yaml)")
 	yamlFile, err := os.ReadFile(cfgFile)
@@ -43,11 +43,11 @@ func (a *app) initConfig() {
 	log.Print("Loaded config successfully")
 }
 
-func (a *app) RegisterExtrCall(e extCall) {
+func (a *apemConf) RegisterExtCall(e extCall) {
 	a.extCalls = append(a.extCalls, e)
 }
 
-func (a *app) initExtCall() {
+func (a *apemConf) initExtCall() {
 	for _, init := range a.extCalls {
 		init()
 	}

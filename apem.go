@@ -14,12 +14,12 @@ import (
 	hs "github.com/karincake/apem/http-std"
 )
 
-var App *app
+var App *apemConf
 var CfgFile string
 
 // init
 func init() {
-	App = &app{
+	App = &apemConf{
 		Conf:       &appa.AppConf{},
 		LoggerConf: &loggera.LoggerConf{},
 		LangConf:   &langa.LangConf{},
@@ -52,6 +52,8 @@ func Run(h http.Handler, m ...any) {
 	if readines < 1 {
 		log.Fatal("App.Run doesn't supply enough options. Please make sure implementation of `loggera` is supplied.")
 	}
+
+	App.initExtCall()
 
 	hs.O.Init(App.HttpConf, &h, App.Conf, m[loggerIdx].(loggera.LoggerItf))
 }

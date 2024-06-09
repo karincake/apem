@@ -1,6 +1,6 @@
 module github.com/karincake/apem
 
-go 1.22.1
+go 1.18
 
 require (
 	github.com/go-redis/redis v6.15.9+incompatible

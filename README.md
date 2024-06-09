@@ -1,12 +1,14 @@
 # Apem : Config Bundle
-A simple Go package that helps you manage your web-api project's configuration in certain areas. The areas that are currently covered are:
+A simple Go package that helps you manage your web-api project's configurations and read it for you. The configurations are grouped into several parts:
 - http server (net/http)
 - database server (gorm mysql, gorm postgres)
 - memory storage server (redis)
 - logger (zerolog, zap)
 - language (karincake)
 
-## Usage and Explanation
+All the read configuration is stored in an exported instance of `apemConf` named `App`.
+
+## Usage and More Explanation
 The concept is pretty simple:
 - Set the configuration's values through `config.yml` file (can be changed to other name)
 - Call apem's main fuction (`apem.Run()`) along with providing the `http.Handler` and adapter's object (we just call it that way for now) you want to use.
@@ -60,6 +62,33 @@ Another thing worth to note is that, since it uses standard library `net/http`, 
 
 For more example please visit: `www.github.com/karincake/apem-usage-samples`
 
+## Extra Call
+After all of the configurations are set without problem, the server will normally runs. But there is a high chance that you will need additional things to do before the server starts. The `apem.App` lets you do by utilizing the `RegisterExtCall` function to register any functions that you need to run before the server runs. 
+
+The function requires a func as parameter as given in the followwing example:
+```
+import (
+	a "github.com/karincake/apem"
+)
+
+func Create() http.Handler {
+	a.App.RegisterExtrCall(myTings) // Register a function to be called before the http server start
+
+	r.HandleFunc("/", (w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("Hello world!!"))
+  })
+
+	r := http.NewServeMux()
+	return r
+}
+
+function myThings() {
+  // do anything here
+}
+
+```
+You can utilize the function anywhere as long as it is called before the `apem.Run`, inside the `init()` function of a pakcage for example.
+
 ## The Adapters
 Adapters are just packages that help you in applying the configuration into other packages, such as `net/http`, `gorm/mysql`, or `redis`. Each adapter implements interface of each area.
 
@@ -68,7 +97,7 @@ It read the configurations and stores them in an exported objects of a struct na
 In the earlier example, the `Run` function is supplied with `loger-zerolog` object (`l.O`) which will be used to store the configuration.
 
 
-## Covered Areas
+## The Config Groups
 ### App
 Just your app information
 
@@ -168,6 +197,6 @@ langConf
   fileName: data.json
 ```
 
-## Always Used Areas
+## Always Used Groups
 - Http Server, due to its main purpose: web-api.
 - Logger, as it is used by the package itself, required in the main function call.
