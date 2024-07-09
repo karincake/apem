@@ -45,6 +45,8 @@ func Run(h http.Handler, m ...any) {
 	readines := 0
 	loggerIdx := -1
 
+	initExtCall()
+
 	for i := range m {
 		if myModule, ok := m[i].(loggera.LoggerItf); ok {
 			readines++
@@ -60,8 +62,6 @@ func Run(h http.Handler, m ...any) {
 	if readines < 1 {
 		log.Fatal("Please make sure App.Run supplied by mandatory adapters implementation. Missing: `loggera`.")
 	}
-
-	initExtCall()
 
 	hs.O.Init(App.HttpCfg, &h, App.AppCfg, m[loggerIdx].(loggera.LoggerItf))
 }

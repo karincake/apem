@@ -15,24 +15,30 @@ type dbGorm struct{}
 
 var O dbGorm
 var I *gorm.DB
+var GormConfig *gorm.Config
 
-func (obj *dbGorm) Init(c *dba.DbCfg, a *appa.AppCfg) {
-	if c.Dsn == "" {
+func (obj *dbGorm) Init(dbCfg *dba.DbCfg, a *appa.AppCfg) {
+	if dbCfg.Dsn == "" {
 		log.Fatal("Database DSN is not provided, please check DbCfg in the configuration file")
 	}
 
-	gormD := postgres.Open(c.Dsn)
+	gormD := postgres.Open(dbCfg.Dsn)
 
-	db, err := gorm.Open(gormD, &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true,
-			NoLowerCase:   true,
-		},
-	})
+	db, err := gorm.Open(gormD, GormConfig)
 	if err != nil {
 		log.Fatal(err.Error())
 	} else {
 		I = db
 		log.Println("Instantiation for database-connetion using db-gorm-mysql, status: DONE!!")
+	}
+}
+
+// some default values configuration
+func init() {
+	GormConfig = &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+			NoLowerCase:   true,
+		},
 	}
 }
