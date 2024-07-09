@@ -1,5 +1,5 @@
 # Apem : Config Bundle
-A simple Go package that helps you start up your web-api application by reading the configurations and apply the configuration to the `adadpters` (we just call it that way for now) to some external libraries.
+A simple Go package that helps a web-api application starts up by reading the configurations and apply the configuration to the `adadpters` (we just call it that way for now) to some external libraries.
 
 Currently the configurations covers several area as follows:
 - http server (net/http)
@@ -12,15 +12,15 @@ All the read configuration is stored in an exported instance of `apemConf` named
 ## Usage and More Explanation
 The concept is pretty simple:
 - Set the configuration's values through `config.yml` file (can be changed to other name)
-- Call apem's main fuction (`apem.Run()`) along with providing the `http.Handler` and adapter's object you want to use.
+- Call apem's main fuction (`apem.Run()`) along with providing the adapter's object that will be used.
 
-For example, to create a very basic http server for your api that write `Hello World`, you can create a `config.yml` file with the following content:
+For example, to create a very basic http server api that writes `Hello World`, first create a `config.yml` file with the following content:
 ```yml
 httpConf:
   host: 127.0.0.1
   port: 8100
 ```
-Prepare your handler
+Prepare the handler
 ```go
 func createHandlers() http.Handler {
 	r := http.NewServeMux()
@@ -37,7 +37,7 @@ func createHandlers() http.Handler {
 }
 ```
 
-Then in your go main package use `apem` as follows
+Then in the go main package use `apem` as follows
 ```go
 package main
 
@@ -47,7 +47,7 @@ import (
 )
 
 func main() {
-    // Your starting point wher you supply the adapters, here in the following
+    // Starting point where it supplies the adapters, here in the following
     // example it supplies logger adapter since it is required by apem itself.
 	a.Run(createHandlers(), &l.O) // &l.O is the logger's object
 }
@@ -55,10 +55,10 @@ func main() {
 
 Note:
 - Adapter for `httpa` doesn't have to be supplied since it only has one adapter (`net/http`) and will always be used.
-- Adapter for `loggera` have to be supplied since it is needed and you have to decice which logger you want to use.
+- Adapter for `loggera` have to be supplied since it is needed and has to be decided which one to be used.
 
 ## Extra Call
-You can run extra logic by utilizing the `apem.RegisterExtCall` that will register functions that will be executed before the http server runs. You can register function as many as you want.
+Extra logics can be executed by utilizing the `apem.RegisterExtCall` that will register functions that will be executed before the http server runs. No limitation of how many functions to be registered.
 
 Example:
 ```go
@@ -82,18 +82,18 @@ function myThings() {
 }
 
 ```
-You can utilize the function anywhere as long as it is called before the `apem.Run`, for example: inside the `init()` function of a pakcage.
+The function can be used anywhere as long as it is called before the `apem.Run`, for example: inside the `init()` function of a pakcage.
 
 ## The Adapters
-Adapters are just packages that help you in applying the configuration into other packages, such as `net/http`, `gorm/mysql`, or `redis`. Each adapter implements interface of each area.
+Adapters are just packages that helps in applying the configuration into other packages, such as `net/http`, `gorm/mysql`, or `redis`. Each adapter implements interface of each area.
 
-Apem reads the configurations and stores them in an exported objects of a struct name `O` of each adapter which you supply, then creates an instance in an exported variable named `I` of ach adapter, which you can use everywhere later on.
+Apem reads the configurations and stores them in an exported objects of a struct name `O` of each adapter (the ones being supplied), then creates an instance in an exported variable named `I` of ach adapter, which can be used everywhere afterwards.
 
-In the earlier example, the `Run` function is supplied with `loger-zerolog` object (`l.O`) which will be used to store the configuration.
+In the earlier example, the `Run` function is supplied with `loger-zerolog`'s object (`l.O`) which will be used to store the configuration.
 
 ## The Area
 ### App
-Just your app information
+Just app information
 
 Configuration structure with sample:
 ```yml
@@ -136,7 +136,7 @@ loggerConf:
   output:
 ```
 
-Due to the needs of standardization for the logger because of it's being used by the core, the interface also has several methods for logging purpose you can use as well listed as follows:
+Due to the needs of standardization for the logger because of it's being used by the core, the interface also has several methods for logging purpose, listed as follows:
 - `Debug()` - log level
 - `Info()` - log level
 - `Warning()` - log level
