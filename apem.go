@@ -22,6 +22,7 @@ var extCalls []extCall
 
 var App *apemCfg
 var CfgFile string
+var CfgContent []byte
 
 // init
 func init() {
@@ -67,15 +68,71 @@ func Run(h http.Handler, m ...any) {
 }
 
 func ParseCfg(cfg any) {
-	yamlFile, err := os.ReadFile(CfgFile)
+	var err error
+	if CfgContent == nil {
+		CfgContent, err = os.ReadFile(CfgFile)
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+	}
+
+	oriVal := reflect.ValueOf(cfg).Interface()
+	err = yaml.Unmarshal(CfgContent, oriVal)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+}
+
+func ParseSingleCfg(cfg any) {
+	// get the file content
+	var baseCfg map[string]any = map[string]any{}
+	content, err := os.ReadFile("./config.yml")
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
 
-	oriVal := reflect.ValueOf(cfg).Interface()
-	err = yaml.Unmarshal(yamlFile, oriVal)
+	// parse file content
+	err = yaml.Unmarshal(content, baseCfg)
 	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		log.Fatalf("%v", err)
+	}
+
+	// get cfg name
+	cv := reflect.ValueOf(cfg)
+	for cv.Kind() == reflect.Pointer || cv.Kind() == reflect.Interface {
+		cv = cv.Elem()
+	}
+	ctn := firstLetterToLower(cv.Type().Name())
+
+	// non struct cant be filled
+	if cv.Kind() != reflect.Struct {
+		panic("input requires struct type")
+	}
+
+	ct := cv.Type()
+	values := baseCfg[ctn].(map[string]any)
+	for i := 0; i < cv.NumField(); i++ {
+		// identify field type and value of the field
+		ft := ct.Field(i)
+		fv := cv.Field(i)
+
+		key := keyOrYamlTag(ft.Name, ft.Tag.Get("yaml"))
+		value, ok := values[key]
+		if !ok {
+			continue
+		}
+
+		ftName := ft.Name
+		fvKind := fv.Kind()
+		var err error
+		if fvKind != reflect.Pointer {
+			reflectValueFiller(fv, fvKind, ftName, value.(string))
+		} else {
+			reflectPointerValueFiller(fv, fv.Type().Elem().Kind(), ftName, value.(string))
+		}
+		if err != nil {
+			panic("input can not be parsed at field: " + ftName)
+		}
 	}
 }
 
