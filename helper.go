@@ -1,6 +1,7 @@
 package apem
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -19,6 +20,19 @@ func keyOrYamlTag(key, yamlTag string) string {
 		}
 	}
 	return string(tagByte[:pos])
+}
+
+func joinInterfaceSlice(slice []interface{}) string {
+	// Create a slice to hold the string representations
+	strSlice := make([]string, len(slice))
+
+	// Convert each element to a string
+	for i, v := range slice {
+		strSlice[i] = fmt.Sprintf("%v", v)
+	}
+
+	// Join the slice of strings with commas
+	return strings.Join(strSlice, ",")
 }
 
 func reflectValueFiller(fv reflect.Value, vk reflect.Kind, ftName, rvs string) {
@@ -70,6 +84,13 @@ func reflectValueFiller(fv reflect.Value, vk reflect.Kind, ftName, rvs string) {
 			} else {
 				fv.SetFloat(rvsVal)
 			}
+		}
+	case vk == reflect.Slice || vk == reflect.Array:
+		// Assuming `rvs` is a comma-separated string of values for slice/array
+		rvsArr := strings.Split(rvs, ",")
+		for i := 0; i < fv.Len() && i < len(rvsArr); i++ {
+			elem := fv.Index(i)
+			reflectValueFiller(elem, elem.Kind(), ftName, rvsArr[i])
 		}
 	}
 }

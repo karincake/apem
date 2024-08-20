@@ -99,7 +99,7 @@ func ParseSingleCfg(cfg any) {
 
 	// get cfg name
 	cv := reflect.ValueOf(cfg)
-	for cv.Kind() == reflect.Pointer || cv.Kind() == reflect.Interface {
+	for cv.Kind() == reflect.Pointer || cv.Kind() == reflect.Interface || cv.Kind() == reflect.Bool {
 		cv = cv.Elem()
 	}
 	ctn := firstLetterToLower(cv.Type().Name())
@@ -126,7 +126,19 @@ func ParseSingleCfg(cfg any) {
 		fvKind := fv.Kind()
 		var err error
 		if fvKind != reflect.Pointer {
-			reflectValueFiller(fv, fvKind, ftName, value.(string))
+			if fvKind == reflect.Bool {
+				boolValue := "false"
+				if value.(bool) {
+					boolValue = "true"
+				}
+				reflectValueFiller(fv, fvKind, ftName, boolValue)
+			} else if fvKind == reflect.Slice || fvKind == reflect.Array {
+				sliceValue := joinInterfaceSlice(value.([]interface{}))
+				reflectValueFiller(fv, fvKind, ftName, sliceValue)
+			} else {
+				reflectValueFiller(fv, fvKind, ftName, value.(string))
+			}
+
 		} else {
 			reflectPointerValueFiller(fv, fv.Type().Elem().Kind(), ftName, value.(string))
 		}
