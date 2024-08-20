@@ -99,7 +99,7 @@ func ParseSingleCfg(cfg any) {
 
 	// get cfg name
 	cv := reflect.ValueOf(cfg)
-	for cv.Kind() == reflect.Pointer || cv.Kind() == reflect.Interface || cv.Kind() == reflect.Bool {
+	for cv.Kind() == reflect.Pointer || cv.Kind() == reflect.Interface {
 		cv = cv.Elem()
 	}
 	ctn := firstLetterToLower(cv.Type().Name())

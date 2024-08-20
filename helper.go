@@ -86,11 +86,21 @@ func reflectValueFiller(fv reflect.Value, vk reflect.Kind, ftName, rvs string) {
 			}
 		}
 	case vk == reflect.Slice || vk == reflect.Array:
-		// Assuming `rvs` is a comma-separated string of values for slice/array
-		rvsArr := strings.Split(rvs, ",")
-		for i := 0; i < fv.Len() && i < len(rvsArr); i++ {
-			elem := fv.Index(i)
-			reflectValueFiller(elem, elem.Kind(), ftName, rvsArr[i])
+		if rvs != "" {
+			// Split the input string into an array of strings
+			rvsArr := strings.Split(rvs, ",")
+
+			// Create a new slice with the appropriate length and capacity
+			slice := reflect.MakeSlice(fv.Type(), len(rvsArr), len(rvsArr))
+
+			// Set the slice elements
+			for i := 0; i < len(rvsArr); i++ {
+				elem := slice.Index(i)
+				reflectValueFiller(elem, elem.Kind(), ftName, rvsArr[i])
+			}
+
+			// Set the field with the created slice
+			fv.Set(slice)
 		}
 	}
 }
