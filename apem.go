@@ -126,7 +126,20 @@ func ParseSingleCfg(cfg any) {
 		fvKind := fv.Kind()
 		var err error
 		if fvKind != reflect.Pointer {
-			reflectValueFiller(fv, fvKind, ftName, value.(string))
+			switch fvKind {
+			case reflect.Bool:
+				boolValue := "false"
+				if value.(bool) {
+					boolValue = "true"
+				}
+				reflectValueFiller(fv, fvKind, ftName, boolValue)
+			case reflect.Slice, reflect.Array:
+				sliceValue := joinInterfaceSlice(value.([]interface{}))
+				reflectValueFiller(fv, fvKind, ftName, sliceValue)
+			default:
+				reflectValueFiller(fv, fvKind, ftName, value.(string))
+			}
+
 		} else {
 			reflectPointerValueFiller(fv, fv.Type().Elem().Kind(), ftName, value.(string))
 		}

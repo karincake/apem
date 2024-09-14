@@ -23,10 +23,9 @@ var O httpStd = httpStd{}
 var wg sync.WaitGroup
 
 func (obj *httpStd) Init(c *httpa.HttpCfg, h *http.Handler, a *appa.AppCfg, l loggera.LoggerItf) {
-	logger = l
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%v:%v", c.Host, c.Port),
-		Handler:      requestLogger(*h),
+		Handler:      *h,
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
