@@ -10,7 +10,7 @@ import (
 	l "github.com/karincake/apem/loggera"
 )
 
-var logger l.LoggerItf
+var Logger l.LoggerItf
 
 type wrappedWriter struct {
 	http.ResponseWriter
@@ -41,7 +41,7 @@ func (obj *wrappedWriter) Flush() {
 	}
 }
 
-func RequestLogger(next http.Handler) http.Handler {
+func SetLog(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		wrapped := &wrappedWriter{
@@ -50,7 +50,7 @@ func RequestLogger(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(wrapped, r)
-		logger.Info().
+		Logger.Info().
 			String("scope", "request").
 			Int("status", wrapped.statusCode).
 			String("method", r.Method).
