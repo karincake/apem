@@ -5,7 +5,6 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 
 	"github.com/karincake/apem/appa"
 	"github.com/karincake/apem/dba"
@@ -30,15 +29,5 @@ func (obj *dbGorm) Init(dbCfg *dba.DbCfg, a *appa.AppCfg) {
 	} else {
 		I = db
 		log.Println("Instantiation for database-connetion using db-gorm-mysql, status: DONE!!")
-	}
-}
-
-// some default values configuration
-func init() {
-	GormConfig = &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true,
-			NoLowerCase:   true,
-		},
 	}
 }
