@@ -20,13 +20,12 @@ type loggerZerolog struct {
 type KeyValFunc func(key string, val any)
 
 var O loggerZerolog
+var Ctx zerolog.Context
 
 func (obj *loggerZerolog) Init(conf *l.LoggerCfg, app *a.AppCfg) {
 	obj.level = l.Level(conf.Level)
 
-	ctx := log.With()
 	if !conf.HideTime {
-		ctx = ctx.Timestamp()
 		if conf.FormatTime {
 			zerolog.TimeFieldFormat = time.RFC3339
 		} else {
@@ -36,7 +35,7 @@ func (obj *loggerZerolog) Init(conf *l.LoggerCfg, app *a.AppCfg) {
 	if conf.HideLevel {
 		zerolog.LevelFieldName = ""
 	}
-	log.Logger = ctx.Logger()
+	log.Logger = Ctx.Logger()
 
 	obj.level = l.Level(conf.Level)
 	if obj.level == l.LInfo {
