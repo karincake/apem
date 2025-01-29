@@ -11,6 +11,7 @@ import (
 	"github.com/karincake/apem/dba"
 	"github.com/karincake/apem/httpa"
 	"github.com/karincake/apem/loggera"
+	lo "github.com/karincake/apem/loggero"
 	"github.com/karincake/apem/msa"
 )
 
@@ -35,5 +36,5 @@ func (obj *apemCfg) initCfg() {
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
-	log.Print("Loaded config successfully")
+	lo.I.Print("Loaded config successfully")
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis"
 
 	"github.com/karincake/apem/appa"
+	lo "github.com/karincake/apem/loggero"
 	"github.com/karincake/apem/msa"
 )
 
@@ -27,5 +28,5 @@ func (obj *msRedis) Init(conf *msa.MsCfg, app *appa.AppCfg) {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Instantiation for memory storage using redis, status: DONE!!")
+	lo.I.Println("Instantiation for memory storage using redis, status: DONE!!")
 }
