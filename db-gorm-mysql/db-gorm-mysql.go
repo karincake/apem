@@ -8,6 +8,7 @@ import (
 
 	"github.com/karincake/apem/appa"
 	"github.com/karincake/apem/dba"
+	lo "github.com/karincake/apem/loggero"
 )
 
 type dbGorm struct{}
@@ -28,6 +29,6 @@ func (obj *dbGorm) Init(dbCfg *dba.DbCfg, appCfg *appa.AppCfg) {
 		log.Fatal(err.Error())
 	} else {
 		I = db
-		log.Println("Instantiation for database-connetion using db-gorm-mysql, status: DONE!!")
+		lo.I.Println("Instantiation for database-connetion using db-gorm-mysql, status: DONE!!")
 	}
 }

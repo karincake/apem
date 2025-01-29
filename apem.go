@@ -10,6 +10,7 @@ import (
 	"github.com/karincake/apem/dba"
 	"github.com/karincake/apem/httpa"
 	"github.com/karincake/apem/loggera"
+	lo "github.com/karincake/apem/loggero"
 	"github.com/karincake/apem/msa"
 	"gopkg.in/yaml.v3"
 
@@ -154,7 +155,7 @@ func RegisterExtCall(funcToCall extCall) {
 }
 
 func initExtCall() {
-	log.Print("Executing extra calls")
+	lo.I.Print("Executing extra calls")
 	for _, init := range extCalls {
 		init()
 	}
