@@ -192,6 +192,15 @@ func (obj *loggerZap) String(key string, val string) l.LoggerItf {
 	return obj
 }
 
+// Any(string, any) LoggerItf
+func (obj *loggerZap) Any(key string, val any) l.LoggerItf {
+	if !obj.set {
+		obj = &loggerZap{set: true, level: obj.level}
+	}
+	obj.fields = append(obj.fields, zap.Any(key, val))
+	return obj
+}
+
 // Send()
 func (obj *loggerZap) Send() {
 	if obj.execLevel == l.LDebug {
