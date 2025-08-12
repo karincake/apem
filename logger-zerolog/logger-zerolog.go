@@ -165,13 +165,13 @@ func (obj *loggerZerolog) String(key string, val string) l.LoggerItf {
 	return obj
 }
 
-// Send()
-func (obj *loggerZerolog) Send() {
-	obj.l.Send()
-}
-
 // Any(string, any) LoggerItf
 func (obj *loggerZerolog) Any(key string, val any) l.LoggerItf {
 	obj.l = obj.l.Any(key, val)
 	return obj
+}
+
+// Send()
+func (obj *loggerZerolog) Send() {
+	obj.l.Send()
 }
