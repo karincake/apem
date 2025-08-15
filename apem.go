@@ -138,7 +138,7 @@ func ParseSingleCfg(cfg any) {
 				sliceValue := joinInterfaceSlice(value.([]interface{}))
 				reflectValueFiller(fv, fvKind, ftName, sliceValue)
 			default:
-				reflectValueFiller(fv, fvKind, ftName, value.(string))
+				reflectValueFiller(fv, fvKind, ftName, value)
 			}
 
 		} else {

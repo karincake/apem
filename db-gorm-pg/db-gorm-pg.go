@@ -29,6 +29,6 @@ func (obj *dbGorm) Init(dbCfg *dba.DbCfg, a *appa.AppCfg) {
 		log.Fatal(err.Error())
 	} else {
 		I = db
-		lo.I.Println("Instantiation for database-connetion using db-gorm-mysql, status: DONE!!")
+		lo.I.Println("Instantiation for database-connetion using db-gorm-pg, status: DONE!!")
 	}
 }
