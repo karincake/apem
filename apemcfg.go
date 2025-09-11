@@ -19,6 +19,7 @@ type apemCfg struct {
 	AppCfg         *appa.AppCfg          `yaml:"appCfg"`
 	LoggerCfg      *loggera.LoggerCfg    `yaml:"loggerCfg"`
 	DbCfg          *dba.DbCfg            `yaml:"dbCfg"`
+	MultiDbCfg     *dba.MultiDbCfg       `yaml:"multiDbCfg"`
 	MsCfg          *msa.MsCfg            `yaml:"msCfg"`
 	HttpCfg        *httpa.HttpCfg        `yaml:"httpCfg"`
 	RateLimiterCfg *httpa.RateLimiterCfg `yaml:"rateLimiterCfg"`
