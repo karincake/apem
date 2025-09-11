@@ -5,13 +5,19 @@ import (
 )
 
 type DbCfg struct {
-	Dsn          string
+	Name         string `yaml:"name"`
+	Dsn          string `yaml:"dsn"`
 	MaxOpenConns int    `yaml:"maxOpenConns"`
 	MaxIdleConns int    `yaml:"maxIdleConns"`
 	MaxIdleTime  string `yaml:"maxIdleTime"`
 	Dialect      string `yaml:"dialect"`
 }
 
+type MultiDbCfg struct {
+	Dbs []DbCfg `yaml:"dbs"`
+}
+
 type DbItf interface {
 	Init(*DbCfg, *appa.AppCfg)
+	InitMulti(*MultiDbCfg, *appa.AppCfg)
 }

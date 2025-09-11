@@ -34,10 +34,11 @@ func init() {
 			Version:  "0.0.1",
 			Env:      "development",
 		},
-		LoggerCfg: &loggera.LoggerCfg{},
-		DbCfg:     &dba.DbCfg{},
-		MsCfg:     &msa.MsCfg{},
-		HttpCfg:   &httpa.HttpCfg{},
+		LoggerCfg:  &loggera.LoggerCfg{},
+		DbCfg:      &dba.DbCfg{},
+		MultiDbCfg: &dba.MultiDbCfg{},
+		MsCfg:      &msa.MsCfg{},
+		HttpCfg:    &httpa.HttpCfg{},
 	}
 	App.initCfg()
 }
@@ -56,6 +57,9 @@ func Run(h http.Handler, m ...any) {
 			myModule.Init(App.LoggerCfg, App.AppCfg)
 		} else if myModule, ok := m[i].(dba.DbItf); ok {
 			myModule.Init(App.DbCfg, App.AppCfg)
+			if App.MultiDbCfg != nil {
+				myModule.InitMulti(App.MultiDbCfg, App.AppCfg)
+			}
 		} else if myModule, ok := m[i].(msa.MsItf); ok {
 			myModule.Init(App.MsCfg, App.AppCfg)
 		}

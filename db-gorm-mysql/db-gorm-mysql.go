@@ -15,9 +15,14 @@ type dbGorm struct{}
 
 var O dbGorm
 var I *gorm.DB
+var IS map[string]*gorm.DB
 var GormConfig *gorm.Config
 
-func (obj *dbGorm) Init(dbCfg *dba.DbCfg, appCfg *appa.AppCfg) {
+func init() {
+	IS = make(map[string]*gorm.DB)
+}
+
+func (obj *dbGorm) Init(dbCfg dba.DbCfg, appCfg *appa.AppCfg) {
 	if dbCfg.Dsn == "" {
 		log.Fatal("Database DSN is not provided, please check DbCfg in the configuration file")
 	}
@@ -30,5 +35,24 @@ func (obj *dbGorm) Init(dbCfg *dba.DbCfg, appCfg *appa.AppCfg) {
 	} else {
 		I = db
 		lo.I.Println("Instantiation for database-connetion using db-gorm-mysql, status: DONE!!")
+	}
+}
+
+func (obj *dbGorm) InitMulti(dbCfgs *dba.MultiDbCfg, a *appa.AppCfg) {
+	for _, dbCfg := range dbCfgs.Dbs {
+		if dbCfg.Dsn == "" {
+			log.Fatal("Database with name: " + dbCfg.Name + " DSN is not provided, please check MultiDbCfg in the configuration file")
+		}
+
+		gormD := mysql.Open(dbCfg.Dsn)
+
+		db, err := gorm.Open(gormD, GormConfig)
+		if err != nil {
+			log.Fatal(err.Error())
+		} else {
+			lo.I.Println("Instantiation for database-connetion using db-gorm-pg with name: " + dbCfg.Name + ", status: DONE!!")
+		}
+
+		IS[dbCfg.Name] = db
 	}
 }
