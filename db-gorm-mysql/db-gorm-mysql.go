@@ -22,7 +22,7 @@ func init() {
 	IS = make(map[string]*gorm.DB)
 }
 
-func (obj *dbGorm) Init(dbCfg dba.DbCfg, appCfg *appa.AppCfg) {
+func (obj *dbGorm) Init(dbCfg *dba.DbCfg, appCfg *appa.AppCfg) {
 	if dbCfg.Dsn == "" {
 		log.Fatal("Database DSN is not provided, please check DbCfg in the configuration file")
 	}
