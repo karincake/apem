@@ -23,7 +23,7 @@ func init() {
 }
 
 func (obj *dbGorm) Init(dbCfg *dba.DbCfg, appCfg *appa.AppCfg) {
-	if dbCfg.Dsn == "" {
+	if dbCfg == nil || dbCfg.Dsn == "" {
 		log.Fatal("Database DSN is not provided, please check DbCfg in the configuration file")
 	}
 
