@@ -35,6 +35,7 @@ type LoggerItf interface {
 	Uint32(string, uint32) LoggerItf
 	Uint64(string, uint64) LoggerItf
 	String(string, string) LoggerItf
+	Any(string, any) LoggerItf
 	Send()
 }
 
