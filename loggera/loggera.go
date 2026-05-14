@@ -12,6 +12,7 @@ type LoggerCfg struct {
 	HideLevel  bool `yaml:"hideLevel"`
 	HideTime   bool `yaml:"hideTime"`
 	FormatTime bool `yaml:"formatTime"`
+	PrettyMode bool `yaml:"prettyMode"`
 }
 
 type LoggerItf interface {

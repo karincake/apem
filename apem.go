@@ -1,6 +1,7 @@
 package apem
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -142,7 +143,11 @@ func ParseSingleCfg(cfg any) {
 				sliceValue := joinInterfaceSlice(value.([]interface{}))
 				reflectValueFiller(fv, fvKind, ftName, sliceValue)
 			default:
-				reflectValueFiller(fv, fvKind, ftName, value)
+				strValue, ok := value.(string)
+				if !ok {
+					strValue = fmt.Sprintf("%v", value)
+				}
+				reflectValueFiller(fv, fvKind, ftName, strValue)
 			}
 
 		} else {
