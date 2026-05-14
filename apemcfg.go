@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"time"
 
 	"gopkg.in/yaml.v3"
 
@@ -35,6 +36,9 @@ func (obj *apemCfg) initCfg() {
 	err = yaml.Unmarshal(yamlFile, obj)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
+	}
+	if App.AppCfg.TimeLocation != nil && *App.AppCfg.TimeLocation != "" {
+		time.LoadLocation(*App.AppCfg.TimeLocation)
 	}
 	lo.I.Print("Loaded config successfully")
 }
