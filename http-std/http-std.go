@@ -27,8 +27,8 @@ func (obj *httpStd) Init(c *httpa.HttpCfg, h *http.Handler, a *appa.AppCfg, l lo
 		Addr:         fmt.Sprintf("%v:%v", c.Host, c.Port),
 		Handler:      *h,
 		IdleTimeout:  time.Minute,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 60 * time.Second,
 	}
 
 	// Gracefull shutdown
